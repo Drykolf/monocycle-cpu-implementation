@@ -1,0 +1,63 @@
+// And module as hello world de1-soc
+module program_counter(
+    switch0,     // 1 bit binary input
+    key0,        // 1 bit binary input
+	 key4,			//unused
+    hex0,        // 7-bit binary Output for 7-segment display
+    hex1,        // 7-bit binary Output for 7-segment display
+    hex2,        // 7-bit binary Output for 7-segment display
+    hex3,         // 7-bit binary Output for 7-segment display
+	 led0				//unused
+);
+//Declared input, outputs
+input  switch0;
+input  key0;
+input  key4;//unused
+output led0;//unused
+output [6:0] hex0; 
+output [6:0] hex1;
+output [6:0] hex2;
+output [6:0] hex3;
+
+//Declaration of memory registries 
+reg [31:0] counter = 0;
+reg key0_last;//unused
+reg pulse;//unused
+
+//Button function
+always @(posedge key0) begin
+    if (key0) begin
+        counter <= counter + 4;
+    end
+end
+
+//Display of the counter in the 4 7-segment displays
+assign hex0 = switch0 ? bin_to_7seg_func(counter[19:16]) : bin_to_7seg_func(counter[3:0]);
+assign hex1 = switch0 ? bin_to_7seg_func(counter[23:20]) : bin_to_7seg_func(counter[7:4]);
+assign hex2 = switch0 ? bin_to_7seg_func(counter[27:24]) : bin_to_7seg_func(counter[11:8]);
+assign hex3 = switch0 ? bin_to_7seg_func(counter[31:28]) : bin_to_7seg_func(counter[15:12]);
+
+// Function to convert 4-bit binary to 7-segment display
+function [6:0] bin_to_7seg_func;
+    input [3:0] bin;
+    case (bin)
+        4'h0: bin_to_7seg_func = 7'b1000000;
+        4'h1: bin_to_7seg_func = 7'b1111001;
+        4'h2: bin_to_7seg_func = 7'b0100100;
+        4'h3: bin_to_7seg_func = 7'b0110000;
+        4'h4: bin_to_7seg_func = 7'b0011001;
+        4'h5: bin_to_7seg_func = 7'b0010010;
+        4'h6: bin_to_7seg_func = 7'b0000010;
+        4'h7: bin_to_7seg_func = 7'b1111000;
+        4'h8: bin_to_7seg_func = 7'b0000000;
+        4'h9: bin_to_7seg_func = 7'b0010000;
+        4'hA: bin_to_7seg_func = 7'b0001000;
+        4'hB: bin_to_7seg_func = 7'b0000011;
+        4'hC: bin_to_7seg_func = 7'b1000110;
+        4'hD: bin_to_7seg_func = 7'b0100001;
+        4'hE: bin_to_7seg_func = 7'b0000110;
+        4'hF: bin_to_7seg_func = 7'b0001110;
+        default: bin_to_7seg_func = 7'b1111111; // Default to all segments off
+    endcase
+endfunction
+endmodule
